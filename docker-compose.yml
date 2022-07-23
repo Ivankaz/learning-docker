@@ -1,0 +1,74 @@
+version: '3'
+services:
+
+  # PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: php:7.3-fpm
+    container_name: app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      # монтирую код приложения с локальной машины в контейнер
+      - ./:/var/www
+      # монтирую конфигурацию php из локальной машины в контейнер
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  # Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      # задаю соответствие между 80 и 443 портами на локальной машине и в контейнере
+      - "80:80"
+      - "443:443"
+    volumes:
+      # монтирую код приложения с локальной машины из текущей папки в /var/www контейнера
+      - ./:/var/www
+      # монтирую конфигурацию nginx из текущей папки в контейнер
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+  
+  # MySQL Service
+  db:
+    image: mysql:5.7.24
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      # задаю соответствие между портом базы данных на локальной машине и в контейнере
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: root
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      # том dbdata для хранения локальной базы данных MySQL внутри контейнера
+      - dbdata:/var/lib/mysql/
+      # монтирую файлы конфигурации MySQL в сервис db
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+  
+  # Docker Networks
+  networks:
+    app-network:
+      driver: bridge
+  
+  # Volumes
+  volumes:
+    # определяю том dbdata
+    dbdata:
+      driver: local
