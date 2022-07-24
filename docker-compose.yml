@@ -39,7 +39,7 @@ services:
       - ./nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network
-  
+
   # MySQL Service
   db:
     image: mysql:5.7.24
@@ -61,14 +61,14 @@ services:
       - ./mysql/my.cnf:/etc/mysql/my.cnf
     networks:
       - app-network
-  
-  # Docker Networks
-  networks:
-    app-network:
-      driver: bridge
-  
-  # Volumes
-  volumes:
-    # определяю том dbdata
-    dbdata:
-      driver: local
+
+# Docker Networks
+networks:
+  app-network:
+    driver: bridge
+
+# Volumes
+volumes:
+  # определяю том dbdata
+  dbdata:
+    driver: local
