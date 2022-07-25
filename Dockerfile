@@ -8,7 +8,7 @@ COPY composer.lock composer.json /var/www/
 WORKDIR /var/www
 
 # устанавливаю зависимости
-RUN apt update && apt install -y \
+RUN apt-get update && apt-get install -y \
     build-essential \
     libzip-dev \
     libpng-dev \
@@ -24,8 +24,8 @@ RUN apt update && apt install -y \
     git \
     curl
 
-# очищаю кэш apt
-RUN apt clean && rm -rf /var/lib/apt/lists/*
+# очищаю кэш apt-get
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # устанавливаю расширения
 RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
