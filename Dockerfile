@@ -1,5 +1,5 @@
 # задаю базовый образ
-FROM php:7.3-fpm
+FROM php:7.4-fpm
 
 # копирую в контейнер файлы composer.lock и composer.json в папку образа /var/www/
 COPY composer.lock composer.json /var/www/
